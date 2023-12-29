@@ -1,4 +1,4 @@
-package eu.example.kickstartkniha.ui.theme
+package eu.example.kickstartkniha
 
 data class Restaurant(
     val id: Int,
