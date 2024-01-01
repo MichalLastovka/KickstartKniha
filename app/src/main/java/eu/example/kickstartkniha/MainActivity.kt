@@ -4,28 +4,50 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import eu.example.kickstartkniha.ui.theme.KickstartKnihaTheme
-import kotlin.concurrent.timer
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var seconds by  mutableStateOf(0.00)
-        val stopWatchTimer = timer(period = 100) {seconds += 0.1}
         setContent {
             KickstartKnihaTheme {
                 // A surface container using the 'background' color from the theme
-                RestaurantScreen()
+                RestaurantsApp()
             }
         }
     }
 }
 
+
+@Composable
+fun RestaurantsApp() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController, startDestination = "restaurants"
+    ) {
+        composable("restaurants") {
+            RestaurantsScreen { id -> navController.navigate("restaurants/$id") }
+        }
+        composable(route = "restaurants/{restaurant_id}", arguments = listOf(navArgument(
+            "restaurant_id"
+        )
+        { type = NavType.IntType }),
+            deepLinks = listOf(navDeepLink {
+                uriPattern = "www.restaurantsapp.details.com/{restaurant_id}"
+            }))
+            {
+            RestaurantDetailScreen()
+            }
+    }
+}
 
 @Preview(
     showSystemUi = true,
@@ -34,6 +56,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     KickstartKnihaTheme {
-        RestaurantScreen()
+        RestaurantsScreen()
     }
 }
